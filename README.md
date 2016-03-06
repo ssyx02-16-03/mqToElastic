@@ -11,11 +11,12 @@ https://pypi.python.org/packages/source/s/stomp.py/stomp.py-4.1.9.tar.gz#md5=fe2
 
 ..elasticSearch
 
-##required password file
-create a pass.json file:
+##required password file <br />
+```
 {
   "stomp.ip" : "localhost",
   "stomp.port" : "61613",
   "elastic.ip" : "localhost",
   "elastic.port" : "9200"
 }
+```
