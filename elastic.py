@@ -1,41 +1,50 @@
-def elastic():
-    class elastic():
-        from datetime import datetime
-        from elasticsearch import Elasticsearch
-        import main
+from datetime import datetime
+from elasticsearch import Elasticsearch
 
-        def __init__(self):
-            self.es = undefined
-            self.creds = getCredentials();
-            self.connecting = false;
+doc = {
+    'author': 'kimchy',
+    'text': 'Elasticsearch: cool. bonsai cool.',
+    'timestamp': datetime.now(),
+    }
 
-        def init(self):
-            connect()
-            refresh('_all')
+class Elastic:
+    def __init__(self,credentials):
+        self.ip = credentials["elastic.ip"]
+        self.port = credentials["elastic.port"]
+        self.connecting = False
+        self.connected = False
 
-        def connect(self):
-             connecting = True
-             es = Elasticsearch([('localhost',9200)])
+    def start(self):
+        self.connect()
+        self.refresh("_all")
 
-        def putIndex(self,index,theBody):
-            res = es.index(index="test-index", doc_type='tweet', id=1, body=theBody)
-            print(res['created'])
+    def connect(self):
+         self.connecting = True
+         print("[elastic] :connecting...")
+         self.es = Elasticsearch(hosts=[{'host': self.ip, 'port': self.port}])
 
-        def getIndex(self,index):
-            res = es.get(index="test-index", doc_type='tweet', id=1)
-            print(res['_source'])
+    def putIndex(self,putIndex,theBody):
+        res = self.es.index(index=putIndex, doc_type='tweet', id=1, body=doc)
+        print(res['created'])
 
-        def refresh(self,index):
-            es.indices.refresh(index=index)
+    def getIndex(self,getIndex):
+        res = self.es.get(index=getIndex, doc_type='tweet', id=1)
+        print(res['_source'])
 
-        def search(self,index,query):
-            res = es.search(index="test-index",
-                            body={
-                                "query": {
-                                    "match_all": {}
-                                    }
-                                })
-            print("Got %d Hits:" % res['hits']['total'])
-            for hit in res['hits']['hits']:
-                print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
-            return res;
+    def refresh(self,refIndex):
+        self.es.indices.refresh(index=refIndex)
+        print("[elastic] :connected!")
+        print(self.es.info())
+        self.connected = True
+
+    def search(self,index,query):
+        res = self.es.search(index="test-index",
+                        body={
+                            "query": {
+                                "match_all": {}
+                                }
+                            })
+        print("Got %d Hits:" % res['hits']['total'])
+        for hit in res['hits']['hits']:
+            print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+        return res;

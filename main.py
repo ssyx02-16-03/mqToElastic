@@ -1,6 +1,5 @@
 import activeMQConnect
-from elastic import elastic
-el = elastic();
+from elastic import Elastic
 
 def getCredentials():
     import json
@@ -10,5 +9,11 @@ def getCredentials():
       passPort = json.load(data_file)
     return passPort;
 
-#activeMQConnect.start()
-el.init()
+thePass = getCredentials()
+el = Elastic(thePass)
+
+activeMQConnect.start(thePass)
+el.start()
+el.getIndex("testing")
+el.putIndex("testing","hey hallo")
+el.getIndex("testing")
